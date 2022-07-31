@@ -63,5 +63,10 @@ STYLE_COEF = 0.01
 
 Далее необходимо запустить скрипт `bot.py`.
 
+## Демонстрация
+![](demonstration.gif)
+
+`YouTube`: https://youtu.be/-Gh7NfLpP8c
+
 ## Дополнительная информация
 По всем остальным вопросам: https://t.me/interpolat1on.
