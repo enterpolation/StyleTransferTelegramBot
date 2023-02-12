@@ -4,25 +4,27 @@ from PIL import Image
 import torchvision.transforms as tt
 from models import VGG, Generator
 
-DEVICE = torch.device('cuda' if torch.cuda.is_available else 'cpu')
+DEVICE = torch.device("cuda" if torch.cuda.is_available else "cpu")
 
 
 def load_image(image, imsize):
-    transform = tt.Compose([
-        tt.Resize((imsize, imsize)),
-        tt.ToTensor(),
-        # tt.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-    ])
+    transform = tt.Compose(
+        [
+            tt.Resize((imsize, imsize)),
+            tt.ToTensor(),
+            # tt.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        ]
+    )
     image = Image.open(image)
     image = transform(image).unsqueeze(0)
     return image.to(DEVICE)
 
 
 async def gan_transfer(user, original_img):
-    IMAGE_SIZE = user.settings['imsize']
+    IMAGE_SIZE = user.settings["imsize"]
 
     model = Generator().to(DEVICE)
-    model.load_state_dict(torch.load('./checkpoints/gen_M.pth'))
+    model.load_state_dict(torch.load("./checkpoints/gen_M.pth"))
 
     original_img = load_image(original_img, IMAGE_SIZE)
     generated_img = model(original_img).cpu().detach()
@@ -32,9 +34,9 @@ async def gan_transfer(user, original_img):
 async def simple_transfer(user, style_img, original_img):
     LEARNING_RATE = 1e-3
     ALPHA = 1
-    BETA = user.settings['style_coef']
-    IMAGE_SIZE = user.settings['imsize']
-    TOTAL_STEPS = user.settings['num_steps']
+    BETA = user.settings["style_coef"]
+    IMAGE_SIZE = user.settings["imsize"]
+    TOTAL_STEPS = user.settings["num_steps"]
 
     original_img = load_image(original_img, IMAGE_SIZE)
     style_img = load_image(style_img, IMAGE_SIZE)
@@ -51,7 +53,7 @@ async def simple_transfer(user, style_img, original_img):
         style_loss = original_loss = 0
 
         for gen_feature, orig_feature, style_feature in zip(
-                generated_features, original_features, style_features
+            generated_features, original_features, style_features
         ):
             batch_size, channel, height, width = gen_feature.shape
             original_loss += torch.mean((gen_feature - orig_feature) ** 2)

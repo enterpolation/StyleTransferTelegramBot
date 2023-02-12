@@ -2,3 +2,5 @@
 /photos
 /.ipynb_checkpoints
 /.idea
+notebooks/
+__pycache__/
